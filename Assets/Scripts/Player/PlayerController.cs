@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _moveSpeed;
     [SerializeField] private Vector2 _moveInput;
     [SerializeField] private float _initialJumpForce = 10f; 
-    [SerializeField] private float _jumpHoldGravityScale = 0.5f; // 스페이스 누를때 중력값
-    [SerializeField] private float _fallGravityScale = 2f;  // 땟을때의 중력값
+    [SerializeField] private float _jumpHoldGravity = 0.5f; // 스페이스 누를때 중력값
+    [SerializeField] private float _fallGravity = 2f;  // 땟을때의 중력값
     [SerializeField] private float _maxJumpHoldTime = 0.2f; 
 
     [SerializeField] private LayerMask _groundLayerMask;
@@ -120,12 +120,12 @@ public class PlayerController : MonoBehaviour
         if (_rigidbody.velocity.y > 0)
         {
             // 점프 올라가는 중, 스페이스바를 땠을때와 누르고있을때의 중력값을 다르게 해서, 약점프, 강점프 구현
-            _rigidbody.AddForce(Vector3.down * gravityForce * (_isJumping ? _jumpHoldGravityScale : _fallGravityScale), ForceMode.Acceleration);
+            _rigidbody.AddForce(Vector3.down * gravityForce * (_isJumping ? _jumpHoldGravity : _fallGravity), ForceMode.Acceleration);
         }
         else if (_rigidbody.velocity.y < 0)
         {
             // 떨어지는 중 
-            _rigidbody.AddForce(Vector3.down * gravityForce * _fallGravityScale, ForceMode.Acceleration);
+            _rigidbody.AddForce(Vector3.down * gravityForce * _fallGravity, ForceMode.Acceleration);
         }
     }
 }
