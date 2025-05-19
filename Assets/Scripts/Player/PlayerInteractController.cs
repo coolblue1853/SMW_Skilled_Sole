@@ -7,7 +7,7 @@ using UnityEngine.TextCore.Text;
 
 public class PlayerInteractController : MonoBehaviour
 {
-    public event Action<IInteractable> OnInteractionChanged;
+    public event Action<ItemObject> OnInteractionChanged;
 
     [SerializeField] private float _checkRate = 0.05f;
     private float _lastCheckTime;
@@ -15,7 +15,7 @@ public class PlayerInteractController : MonoBehaviour
     [SerializeField] private LayerMask _layerMask;
 
     public GameObject curInteractGameObject;
-    private IInteractable curInteractable;
+    private ItemObject curItem;
     private Camera _camera;
 
     void Start()
@@ -47,15 +47,18 @@ public class PlayerInteractController : MonoBehaviour
                 if (hit.collider.gameObject != curInteractGameObject)
                 {
                     curInteractGameObject = hit.collider.gameObject;
-                    curInteractable = hit.collider.GetComponent<IInteractable>();
-                    // OnInteractionChanged?.Invoke(curInteractable);
+                    curItem = hit.collider.GetComponent<ItemObject>();
+                    OnInteractionChanged?.Invoke(curItem);
                 }
             }
             else
             {
-                curInteractGameObject = null;
-                curInteractable = null;
-                // OnInteractionChanged?.Invoke(null);
+                if(curInteractGameObject != null)
+                {
+                    curInteractGameObject = null;
+                    curItem = null;
+                    OnInteractionChanged?.Invoke(null);
+                }
             }
         }
     }
