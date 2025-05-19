@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,18 +14,15 @@ public class UI_HpBar : UI_Scene
     public override void Init()
     {
         base.Init();
+        _stathandler = PlayerManager.Instance.StatHandler;
+        _stathandler.OnHealthChanged += UpdateHealthBar;
+        _stathandler.OnMaxHealthChanged += UpdateMaxHealthBar;
 
         Bind<Image>(typeof(Images));
         UpdateHealthBar(_stathandler.Health);
         UpdateMaxHealthBar(_stathandler.MaxHealth);
     }
 
-    void OnEnable()
-    {
-        _stathandler = PlayerManager.Instance.StatHandler;
-        _stathandler.OnHealthChanged += UpdateHealthBar;
-        _stathandler.OnMaxHealthChanged += UpdateMaxHealthBar;
-    }
 
     void OnDisable()
     {

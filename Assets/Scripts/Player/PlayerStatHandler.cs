@@ -9,6 +9,9 @@ public class PlayerStatHandler : MonoBehaviour
     // 능력치 관련 이벤트
     public event Action<float> OnHealthChanged;
     public event Action<float> OnMaxHealthChanged;
+    public event Action<float> OnSteminaChanged;
+    public event Action<float> OnMaxSteminaChanged;
+
 
     [SerializeField] private float _invincibleDuration = 1.0f; // 무적 시간 (초)
     private bool _isInvincible = false;
@@ -39,7 +42,6 @@ public class PlayerStatHandler : MonoBehaviour
             }
         }
     }
-
     private IEnumerator InvincibleCoroutine()
     {
         _isInvincible = true;
@@ -62,4 +64,31 @@ public class PlayerStatHandler : MonoBehaviour
         }
     }
 
+     // 체력, 추후 ResuorceManager로 관리?
+    public float limitStemina = 10;
+    [SerializeField] private float _stemina;
+    public float Stemina
+    {
+        get => _stemina;
+        set
+        {
+            _stemina = Mathf.Clamp(value, 0, MaxStemina);
+            OnSteminaChanged?.Invoke(_stemina);
+        }
+    }
+    [SerializeField] private float _maxStemina;
+    public float MaxStemina
+    {
+        get => _maxStemina;
+        set
+        {
+            float newStemina = Mathf.Min(value, limitStemina);
+
+            if (_maxStemina != newStemina)
+            {
+                _maxStemina = newStemina;
+                OnMaxSteminaChanged?.Invoke(_maxStemina);
+            }
+        }
+    }
 }
