@@ -29,11 +29,7 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        // 테스트용
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            StatHandler.Health -= 10;
-        }
+
     }
 
 }

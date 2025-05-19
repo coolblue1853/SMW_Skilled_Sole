@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_Interaction : UI_Popup
+public class UI_Interaction : UI_Scene
 {
     private PlayerInteractController _interaction;
     enum Texts
@@ -48,8 +48,5 @@ public class UI_Interaction : UI_Popup
             descriptionTxt.text = "";
             panel.gameObject.SetActive(false);
         }
-
-
     }
-
 }

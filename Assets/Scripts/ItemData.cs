@@ -33,7 +33,6 @@ public class ItemData : ScriptableObject
     public GameObject DropPrefab;
 
     [Header("Stacking")]
-    public bool CanStack;
     public int MaxStackAmount;
 
     [Header("Consumable")]

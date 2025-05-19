@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour
             _lookInput = input.Get<Vector2>();
 
             _yaw += _lookInput.x * _rotationSpeed * Time.deltaTime;
-            _pitch += _lookInput.y * _rotationSpeed * Time.deltaTime;
+            _pitch -= _lookInput.y * _rotationSpeed * Time.deltaTime;
             _pitch = Mathf.Clamp(_pitch, 5f, 80f); // 각도 제한
         }
     }

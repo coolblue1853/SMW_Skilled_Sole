@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class PlayerInteractController : MonoBehaviour
 {
     public event Action<ItemObject> OnInteractionChanged;
+    public event Action<ItemData> OnAddItem;
 
     [SerializeField] private float _checkRate = 0.05f;
     private float _lastCheckTime;
@@ -24,6 +21,11 @@ public class PlayerInteractController : MonoBehaviour
     }
 
     private void Update()
+    {
+        Interaction();
+    }
+
+    void Interaction()
     {
         if (Time.time - _lastCheckTime > _checkRate)
         {
@@ -53,7 +55,7 @@ public class PlayerInteractController : MonoBehaviour
             }
             else
             {
-                if(curInteractGameObject != null)
+                if (curInteractGameObject != null)
                 {
                     curInteractGameObject = null;
                     curItem = null;
@@ -63,23 +65,9 @@ public class PlayerInteractController : MonoBehaviour
         }
     }
 
-
-
-    // 씬창에서의 확인 하기 위한 Gizmo
-    void OnDrawGizmos()
+    public void OnInteract()
     {
-        Vector3 flatForward = _camera.transform.forward;
-        flatForward.y = 0f;
-        flatForward.Normalize();
-
-        Vector3 boxHalfExtents = new Vector3(0.5f, 0.5f, _maxCheckDistance / 2f);
-        Vector3 center = transform.position + flatForward * _maxCheckDistance * 0.5f;
-        Quaternion rotation = Quaternion.LookRotation(flatForward);
-
-        Gizmos.color = Color.cyan;
-        Matrix4x4 matrix = Matrix4x4.TRS(center, rotation, Vector3.one);
-        Gizmos.matrix = matrix;
-        Gizmos.DrawWireCube(Vector3.zero, boxHalfExtents * 2f);
+        if(curItem != null)
+            OnAddItem.Invoke(curItem.Data);
     }
-
 }
