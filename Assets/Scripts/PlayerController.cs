@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (_rigidbody.velocity.y < 0)
         {
-            // 떨어지는 중 (더 빠르게)
+            // 떨어지는 중 
             _rigidbody.AddForce(Vector3.down * gravityForce * _fallGravityScale, ForceMode.Acceleration);
         }
     }
