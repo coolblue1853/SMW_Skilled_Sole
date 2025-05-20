@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0aedb497134f054fa92878db1164099, type: 3}
+  m_Name: Wing
+  m_EditorClassIdentifier: 
+  DisplayName: "\uC2E0\uC18D\uC758 \uBB3C\uC57D"
+  Descrition: "\uC774\uB3D9\uC18D\uB3C4\uB97C \uC7A0\uC2DC\uB3D9\uC548 \uC62C\uB824\uC8FC\uB294
+    \uBB3C\uC57D."
+  Type: 2
+  Icon: {fileID: 21300000, guid: 03b8c13903216644985777fd77edd855, type: 3}
+  DropPrefab: {fileID: 0}
+  MaxStackAmount: 20
+  consumables: []
+  buffs:
+  - Type: 0
+    Time: 5
+    Value: 5

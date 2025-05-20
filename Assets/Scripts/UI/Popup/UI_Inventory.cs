@@ -11,6 +11,7 @@ public class UI_Inventory : UI_Scene
 {
     private PlayerInteractController _interaction;
     private PlayerStatHandler _statHandler;
+    private BuffController _buffs;
 
     [SerializeField] private GameObject _inventory;
     [SerializeField] private GameObject _slotPrefab;
@@ -46,8 +47,10 @@ public class UI_Inventory : UI_Scene
     {
         _inventory.SetActive(true); // 초기화 시작
         base.Init();
-        _interaction = PlayerManager.Instance.InteractController;
-        _statHandler = PlayerManager.Instance.StatHandler;
+        var player = PlayerManager.Instance;
+        _interaction = player.InteractController;
+        _statHandler = player.StatHandler;
+        _buffs = player.BuffController;
         _interaction.OnAddItem += AddItem;
 
         Bind<GridLayoutGroup>(typeof(Grid));
@@ -135,6 +138,7 @@ public class UI_Inventory : UI_Scene
         {
             var slot = itemSlots[_curIndex];
             var cunsumData = slot.Item.consumables;
+            var buffData = slot.Item.buffs;
 
             foreach(var value in cunsumData)
             {
@@ -145,7 +149,15 @@ public class UI_Inventory : UI_Scene
                         break;
                 }
             }
-
+            foreach (var value in buffData)
+            {
+                switch (value.Type)
+                {
+                    case BuffType.Speed:
+                        _buffs.ApplyBuff(value.Type, value.Value, value.Time);
+                        break;
+                }
+            }
 
             if (slot.Stack == 1)
             {

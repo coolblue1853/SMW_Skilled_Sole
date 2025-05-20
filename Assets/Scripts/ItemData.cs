@@ -12,13 +12,23 @@ public enum ItemType
 
 public enum ConsumableType
 {
-    Health
+    Health,
 }
-
+public enum BuffType
+{
+    Speed,
+}
 [System.Serializable]
 public class ItemDataConsumable
 {
     public ConsumableType Type;
+    public float Value;
+}
+[System.Serializable]
+public class ItemDataBuff
+{
+    public BuffType Type;
+    public float Time;
     public float Value;
 }
 
@@ -37,4 +47,7 @@ public class ItemData : ScriptableObject
 
     [Header("Consumable")]
     public ItemDataConsumable[] consumables;
+
+    [Header("Buff")]
+    public ItemDataBuff[] buffs;
 }

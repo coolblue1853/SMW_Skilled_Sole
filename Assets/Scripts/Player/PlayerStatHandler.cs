@@ -91,4 +91,20 @@ public class PlayerStatHandler : MonoBehaviour
             }
         }
     }
+
+    [SerializeField] private float _walkSpeed;
+    [SerializeField] private float _runSpeed;
+    private float _addSpeed;
+    public float WalkSpeed
+    {
+        get => _walkSpeed + _addSpeed;
+        set => _walkSpeed = value;
+    }
+    public float RunSpeed
+    {
+        get => _runSpeed + _addSpeed;
+        set => _runSpeed = value;
+    }
+    public void AddSpeedModifier(float value) => _addSpeed += value;    
+    public void RemoveSpeedModifier(float value) => _addSpeed -= value;    
 }

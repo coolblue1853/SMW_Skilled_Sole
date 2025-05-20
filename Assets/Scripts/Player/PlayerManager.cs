@@ -7,6 +7,7 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance { get; private set; }
     public PlayerStatHandler StatHandler;
     public PlayerInteractController InteractController;
+    public BuffController BuffController;
 
     private void Awake()
     {
@@ -25,6 +26,7 @@ public class PlayerManager : MonoBehaviour
     {
         StatHandler = GetComponent<PlayerStatHandler>();
         InteractController = GetComponent<PlayerInteractController>();
+        BuffController = GetComponent<BuffController>();
     }
 
     private void Update()

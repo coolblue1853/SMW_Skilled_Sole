@@ -10,8 +10,6 @@ public class PlayerController : MonoBehaviour
     private Transform _cameraTransform;
 
     [Header("Walk_run")]
-    [SerializeField] private float _walkSpeed = 3f;
-    [SerializeField] private float _runSpeed = 6f;
     [SerializeField] private float _runUseStemina = 0.1f;
     [SerializeField] private float _restoreStemina = 0.3f;
     [SerializeField] private float _restoreDelay = 2f; // 멈춘 뒤 회복까지 대기 시간
@@ -20,22 +18,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector2 _moveInput;
 
     [Header("Jump")]
-    [SerializeField] private float _initialJumpForce = 10f; 
+    [SerializeField] private float _initialJumpForce = 10f;
     [SerializeField] private float _jumpHoldGravity = 0.5f; // 스페이스 누를때 중력값
     [SerializeField] private float _fallGravity = 2f;  // 땟을때의 중력값
-    [SerializeField] private float _maxJumpHoldTime = 0.2f; 
+    [SerializeField] private float _maxJumpHoldTime = 0.2f;
 
     [SerializeField] private LayerMask _groundLayerMask;
     [SerializeField] private Transform _groundPivot;
 
     private Rigidbody _rigidbody;
     private float _jumpTimer;
-   [SerializeField] private float _runToggleTimer = 0f;
+    [SerializeField] private float _runToggleTimer = 0f;
     private float _steminaTimer = 0f;
     private float _restoreDelayTimer = 0f;
-private float _restoreIntervalTimer = 0f;
+    private float _restoreIntervalTimer = 0f;
     private bool _isJumping;
-   [SerializeField] private bool _isRunning = false;
+    [SerializeField] private bool _isRunning = false;
     private bool _isMoving = false;
 
     private void Awake()
@@ -131,12 +129,12 @@ private float _restoreIntervalTimer = 0f;
 
         Vector3 moveDir = cameraForward * inputDir.z + cameraRight * inputDir.x;
 
-        float speed = _isRunning ? _runSpeed : _walkSpeed; // 달리기속도인지 걷기 속도인지
+        float speed = _isRunning ? _statHandler.RunSpeed : _statHandler.WalkSpeed; // 달리기속도인지 걷기 속도인지
 
         if (_statHandler.Stemina < _runUseStemina)
             _isRunning = false;
 
-            _rigidbody.velocity = moveDir * speed + new Vector3(0, _rigidbody.velocity.y, 0);
+        _rigidbody.velocity = moveDir * speed + new Vector3(0, _rigidbody.velocity.y, 0);
     }
 
     bool IsGrounded()
@@ -192,7 +190,7 @@ private float _restoreIntervalTimer = 0f;
         }
         else
         {
-            _steminaTimer = 0f; 
+            _steminaTimer = 0f;
         }
     }
     private void HandleSteminaRestore()
@@ -204,7 +202,7 @@ private float _restoreIntervalTimer = 0f;
             return;
         }
 
-        if(_statHandler.MaxStemina > _statHandler.Stemina)
+        if (_statHandler.MaxStemina > _statHandler.Stemina)
         {
             _restoreDelayTimer += Time.deltaTime;
 
