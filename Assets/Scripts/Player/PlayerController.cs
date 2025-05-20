@@ -359,9 +359,8 @@ public class PlayerController : MonoBehaviour
     public void SetAvailableMove(bool value)
     {
         _availableMove = value;
+        _rigidbody.velocity = Vector3.zero;
 
-        if(value == false)
-            _rigidbody.velocity = Vector3.zero;
     }
     IEnumerator EnableMoveAfterDelay(float delay)
     {
