@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private LayerMask _groundLayerMask;
     [SerializeField] private Transform _groundPivot;
+    [SerializeField] private LayerMask _ladderLayerMask;
+    [SerializeField] private LayerMask _wallJumpLayerMask;
 
     private Rigidbody _rigidbody;
     private float _jumpTimer;
@@ -35,8 +37,18 @@ public class PlayerController : MonoBehaviour
     private bool _isJumping;
     [SerializeField] private bool _isRunning = false;
     private bool _isMoving = false;
-    private bool _availableMove = true;
+    [SerializeField]  private bool _availableMove = true;
 
+    // 사다리 관련 변수
+    [SerializeField] private Transform _ladderRayPivot;
+    private bool _isOnLadder = false;
+    private bool _isClimbing = false;
+    private Vector3 _ladderForward; // 사다리 방향 캐싱
+
+    // 벽점프 관련변수
+    [SerializeField] private float wallJumpForce = 8f;
+    [SerializeField] private float ladderGravity = -2f; // 원하는 중력 세기
+    private bool _isWallJumpalbe = false;
     private void Awake()
     {
         _cameraTransform = Camera.main.transform;
@@ -49,10 +61,19 @@ public class PlayerController : MonoBehaviour
         {
             Move();
         }
-    
+
     }
     private void Update()
     {
+        CheckLadder();
+
+
+        if (_isClimbing && _isOnLadder)
+        {
+            ClimbLadder();
+            return;
+        }
+
         if (_isJumping)
         {
             _jumpTimer += Time.deltaTime;
@@ -85,15 +106,38 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputValue input)
     {
+        if (!_availableMove)
+            return;
+
         if (_isRunning)
             _runToggleTimer = _runToggleCooldown;
         _moveInput = input.Get<Vector2>();
     }
     public void OnJump(InputValue input)
     {
+        if (_isClimbing && input.isPressed)
+        {
+            _isOnLadder = false;
+            _isClimbing = false;
+            _rigidbody.useGravity = true;
+
+            //벽점프
+            if (_isWallJumpalbe)
+            {
+                _isWallJumpalbe = false;
+                SetAvailableMove(false);
+                Vector3 jumpDir = (-_ladderForward.normalized + Vector3.up).normalized;
+                _rigidbody.velocity = Vector3.zero; // 기존 속도 초기화
+                _rigidbody.AddForce(jumpDir * wallJumpForce, ForceMode.Impulse);
+                StartCoroutine(EnableMoveAfterDelay(0.5f));
+            }
+   
+            return;
+        }
+
         if (input.isPressed && _availableMove)
         {
-            if (IsGrounded())
+            if (CheckGrounded())
             {
                 _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z); // Y속도 초기화
                 _rigidbody.AddForce(Vector3.up * _initialJumpForce, ForceMode.Impulse);
@@ -121,29 +165,62 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         if (!_availableMove) return;
+
         Vector3 inputDir = new Vector3(_moveInput.x, 0, _moveInput.y);
         _isMoving = inputDir.sqrMagnitude > 0.01f;
-        // 카메라 기준 방향으로 변환
+
+        // 카메라 기준 방향 계산
         Vector3 cameraForward = _cameraTransform.forward;
         Vector3 cameraRight = _cameraTransform.right;
-
-        // 수직 방향 제거
         cameraForward.y = 0;
         cameraRight.y = 0;
         cameraForward.Normalize();
         cameraRight.Normalize();
 
-        Vector3 moveDir = cameraForward * inputDir.z + cameraRight * inputDir.x;
+        Vector3 moveDir;
 
-        float speed = _isRunning ? _statHandler.RunSpeed : _statHandler.WalkSpeed; // 달리기속도인지 걷기 속도인지
+        if (_isOnLadder) 
+        {
+            // 사다리에 붙으면 사다리 방향을 보도록
+            moveDir = _ladderForward;
+        }
+        else
+        {
+            moveDir = cameraForward * inputDir.z + cameraRight * inputDir.x;
+        }
+
+        float speed = _isRunning ? _statHandler.RunSpeed : _statHandler.WalkSpeed;
 
         if (_statHandler.Stemina < _runUseStemina)
             _isRunning = false;
 
-        _rigidbody.velocity = moveDir * speed + new Vector3(0, _rigidbody.velocity.y, 0);
+        Vector3 horizontalVelocity = moveDir * speed;
+
+        if (Physics.Raycast(_ladderRayPivot.position, horizontalVelocity.normalized, out RaycastHit hit, 0.5f))
+        {
+            Vector3 slideDir = Vector3.ProjectOnPlane(horizontalVelocity, hit.normal);
+            horizontalVelocity = slideDir;
+        }
+
+        _rigidbody.velocity = new Vector3(horizontalVelocity.x, _rigidbody.velocity.y, horizontalVelocity.z);
+
+        if (_isMoving && _availableMove)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
     }
 
-    bool IsGrounded()
+
+
+    private void ClimbLadder()
+    {
+        float climbSpeed = _statHandler.WalkSpeed * 0.75f; // 사다리 속도는 걷는 속도의 75%
+        Vector3 climbVelocity = new Vector3(0, _moveInput.y * climbSpeed, 0);
+        _rigidbody.velocity = climbVelocity;
+    }
+
+    bool CheckGrounded()
     {
         Ray[] rays = new Ray[4]
         {
@@ -165,6 +242,59 @@ public class PlayerController : MonoBehaviour
 
         return false;
     }
+    private void CheckLadder()
+    {
+        RaycastHit hit;
+        Vector3 origin = _ladderRayPivot.position;
+
+        Vector3 inputDir = new Vector3(_moveInput.x, 0, _moveInput.y);
+
+        Vector3 cameraForward = _cameraTransform.forward;
+        Vector3 cameraRight = _cameraTransform.right;
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        Vector3 direction = (cameraForward * inputDir.z + cameraRight * inputDir.x).normalized;
+
+        Debug.DrawRay(origin, direction * 0.6f, Color.red, 0.1f);
+
+        if (Physics.Raycast(origin, direction, out hit, 0.6f, _ladderLayerMask))
+        {
+            _isOnLadder = true;
+
+            _ladderForward = -hit.normal;
+            if (Mathf.Abs(_moveInput.y) > 0.1f)
+            {
+                _isClimbing = true;
+                _rigidbody.useGravity = false;
+            }
+        }
+        else if (Physics.Raycast(origin, direction, out hit, 0.6f, _wallJumpLayerMask))
+        {
+            _ladderForward = -hit.normal;
+            if (Mathf.Abs(_moveInput.y) > 0.1f)
+            {
+                _isClimbing = true;
+                _isWallJumpalbe = true;
+            }
+        }
+        else 
+        {
+            if(inputDir != Vector3.zero)
+            {
+                _isOnLadder = false;
+                _isClimbing = false;
+                _isWallJumpalbe = false;
+                _rigidbody.useGravity = true;
+            }
+
+        }
+    }
+
+
+
 
     private void AdjustGravity()
     {
@@ -232,5 +362,10 @@ public class PlayerController : MonoBehaviour
 
         if(value == false)
             _rigidbody.velocity = Vector3.zero;
+    }
+    IEnumerator EnableMoveAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SetAvailableMove(true);
     }
 }
