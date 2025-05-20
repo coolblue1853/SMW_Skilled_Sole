@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     private bool _isJumping;
     [SerializeField] private bool _isRunning = false;
     private bool _isMoving = false;
+    private bool _availableMove = true;
 
     private void Awake()
     {
@@ -44,7 +45,11 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        Move();
+        if (_availableMove)
+        {
+            Move();
+        }
+    
     }
     private void Update()
     {
@@ -86,7 +91,7 @@ public class PlayerController : MonoBehaviour
     }
     public void OnJump(InputValue input)
     {
-        if (input.isPressed)
+        if (input.isPressed && _availableMove)
         {
             if (IsGrounded())
             {
@@ -115,6 +120,7 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
+        if (!_availableMove) return;
         Vector3 inputDir = new Vector3(_moveInput.x, 0, _moveInput.y);
         _isMoving = inputDir.sqrMagnitude > 0.01f;
         // 카메라 기준 방향으로 변환
@@ -220,4 +226,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void SetAvailableMove(bool value)
+    {
+        _availableMove = value;
+
+        if(value == false)
+            _rigidbody.velocity = Vector3.zero;
+    }
 }
