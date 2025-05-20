@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class MovePlatform : MonoBehaviour
 {
+
     [SerializeField] private Transform _startPoint;
     [SerializeField] private Transform _endPoint;
     private GameObject _platform;
@@ -52,15 +53,13 @@ public class MovePlatform : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-
         if (collision.transform.CompareTag("Player"))
         {
             float playerPivot = collision.transform.position.y + collision.transform.localScale.y / 2;
-            if (playerPivot+ _extra > _yPivot)
+            if (playerPivot + _extra > _yPivot)
             {
-                collision.transform.SetParent(_platform.transform);
+                collision.transform.SetParent(_platform.transform, true);
             }
-
         }
     }
 

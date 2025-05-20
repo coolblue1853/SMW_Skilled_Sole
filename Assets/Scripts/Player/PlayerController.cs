@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask _wallJumpLayerMask;
 
     private Rigidbody _rigidbody;
+    private Vector3 _inputDir;
     private float _jumpTimer;
     [SerializeField] private float _runToggleTimer = 0f;
     private float _steminaTimer = 0f;
@@ -49,6 +50,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float wallJumpForce = 8f;
     [SerializeField] private float ladderGravity = -2f; // 원하는 중력 세기
     private bool _isWallJumpalbe = false;
+
     private void Awake()
     {
         _cameraTransform = Camera.main.transform;
@@ -166,8 +168,8 @@ public class PlayerController : MonoBehaviour
     {
         if (!_availableMove) return;
 
-        Vector3 inputDir = new Vector3(_moveInput.x, 0, _moveInput.y);
-        _isMoving = inputDir.sqrMagnitude > 0.01f;
+        _inputDir = new Vector3(_moveInput.x, 0, _moveInput.y);
+        _isMoving = _inputDir.sqrMagnitude > 0.01f;
 
         // 카메라 기준 방향 계산
         Vector3 cameraForward = _cameraTransform.forward;
@@ -186,7 +188,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            moveDir = cameraForward * inputDir.z + cameraRight * inputDir.x;
+            moveDir = cameraForward * _inputDir.z + cameraRight * _inputDir.x;
         }
 
         float speed = _isRunning ? _statHandler.RunSpeed : _statHandler.WalkSpeed;
@@ -247,7 +249,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         Vector3 origin = _ladderRayPivot.position;
 
-        Vector3 inputDir = new Vector3(_moveInput.x, 0, _moveInput.y);
+        _inputDir = new Vector3(_moveInput.x, 0, _moveInput.y);
 
         Vector3 cameraForward = _cameraTransform.forward;
         Vector3 cameraRight = _cameraTransform.right;
@@ -256,7 +258,7 @@ public class PlayerController : MonoBehaviour
         cameraForward.Normalize();
         cameraRight.Normalize();
 
-        Vector3 direction = (cameraForward * inputDir.z + cameraRight * inputDir.x).normalized;
+        Vector3 direction = (cameraForward * _inputDir.z + cameraRight * _inputDir.x).normalized;
 
         Debug.DrawRay(origin, direction * 0.6f, Color.red, 0.1f);
 
@@ -282,7 +284,7 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            if(inputDir != Vector3.zero)
+            if(_inputDir != Vector3.zero)
             {
                 _isOnLadder = false;
                 _isClimbing = false;
@@ -358,9 +360,11 @@ public class PlayerController : MonoBehaviour
 
     public void SetAvailableMove(bool value)
     {
+        _inputDir = Vector3.zero;
+        _moveInput = Vector3.zero;
         _availableMove = value;
         _rigidbody.velocity = Vector3.zero;
-
+        _isMoving = false;
     }
     IEnumerator EnableMoveAfterDelay(float delay)
     {
