@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -27,6 +28,8 @@ public class UI_Inventory : UI_Scene
     private TextMeshProUGUI _detailNameTxt;
     private TextMeshProUGUI _detailDescritionTxt;
     private Button _consumBtn;
+    private Button _equipBtn;
+    private Button _unequipBtn;
 
 
     enum Grid
@@ -40,7 +43,9 @@ public class UI_Inventory : UI_Scene
     }
     enum Buttons
     {
-        UseConsumable
+        UseConsumable,
+        Equip,
+        Unequip,
     }
 
     public override void Init()
@@ -61,10 +66,14 @@ public class UI_Inventory : UI_Scene
         _detailNameTxt = Get<TextMeshProUGUI>((int)TMPs.Name);
         _detailDescritionTxt = Get<TextMeshProUGUI>((int)TMPs.Description);
         _consumBtn = Get<Button>((int)Buttons.UseConsumable);
+        _equipBtn = Get<Button>((int)Buttons.Equip);
+        _unequipBtn = Get<Button>((int)Buttons.Unequip);
 
 
         //함수 연결
         _consumBtn.onClick.AddListener(ConsumItem);
+        _equipBtn.onClick.AddListener(EquipItem);
+        _unequipBtn.onClick.AddListener(UnequipItem);
 
         //초기화 작업
         CloseAllBtn();
@@ -127,6 +136,18 @@ public class UI_Inventory : UI_Scene
             case ItemType.Consumable:
                 _consumBtn.gameObject.SetActive(true);
                 break;
+            case ItemType.Equipable:
+                if (_curItemData.isEquiped)
+                {
+                    _unequipBtn.gameObject.SetActive(true);
+                    _equipBtn.gameObject.SetActive(false);
+                }
+                else
+                {
+                    _unequipBtn.gameObject.SetActive(false);
+                    _equipBtn.gameObject.SetActive(true);
+                }
+                break;
         }
     }
 
@@ -172,6 +193,53 @@ public class UI_Inventory : UI_Scene
         }
     }
 
+    // 장착 해제의 중복 구조 해결할 필요성 있음
+    void EquipItem()
+    {
+        if (_curItemData != null && _curItemData.Type == ItemType.Equipable)
+        {
+            var slot = itemSlots[_curIndex];
+            var equipData = slot.Item.equips;
+
+            foreach (var value in equipData)
+            {
+                switch (value.Type)
+                {
+                    case BuffType.Speed:
+                        _statHandler.AddSpeedModifier(value.Value);
+                        break;
+                }
+            }
+            slot.UpdateEquiped(true);
+            _curItemData.isEquiped = !_curItemData.isEquiped;
+            _unequipBtn.gameObject.SetActive(true);
+            _equipBtn.gameObject.SetActive(false);
+        }
+    }
+    void UnequipItem()
+    {
+        if (_curItemData != null && _curItemData.Type == ItemType.Equipable)
+        {
+            var slot = itemSlots[_curIndex];
+            var equipData = slot.Item.equips;
+
+            foreach (var value in equipData)
+            {
+                switch (value.Type)
+                {
+                    case BuffType.Speed:
+                        _statHandler.RemoveSpeedModifier(value.Value);
+                        break;
+                }
+            }
+            slot.UpdateEquiped(false);
+            _curItemData.isEquiped = !_curItemData.isEquiped;
+            _unequipBtn.gameObject.SetActive(false);
+            _equipBtn.gameObject.SetActive(true);
+        }
+    }
+
+
     void ResetDetail()
     {
         _detailNameTxt.text = "";
@@ -181,6 +249,8 @@ public class UI_Inventory : UI_Scene
     void CloseAllBtn()
     {
         _consumBtn.gameObject.SetActive(false);
+        _equipBtn.gameObject.SetActive(false);
+        _unequipBtn.gameObject.SetActive(false);
     }
 
     public void OnInventory()

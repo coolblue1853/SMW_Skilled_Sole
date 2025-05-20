@@ -11,7 +11,8 @@ public class ItemSlot : MonoBehaviour
     public int Stack = 0;
     public int Idx = -1;
     [SerializeField] private Image _icon;
-    [SerializeField] private TextMeshProUGUI _tmp;
+    [SerializeField] private TextMeshProUGUI _stackTxt;
+    [SerializeField] private GameObject _equiped;
     private Color _alpha0 = new Color(255,255,255,0);
     private Color _alpha255 = new Color(255,255,255,255);
 
@@ -24,12 +25,19 @@ public class ItemSlot : MonoBehaviour
     {
         if(Stack == 1)
         {
-            _tmp.text = "";
+            _stackTxt.text = "";
         }
         else
         {
-            _tmp.text = Stack.ToString();
+            _stackTxt.text = Stack.ToString();
         }
+    }
+    public void UpdateEquiped(bool isEquiped)
+    {
+        if (isEquiped)
+            _equiped.SetActive(true);
+        else
+            _equiped.SetActive(false);
     }
 
     public void ResetSlot()
@@ -38,7 +46,8 @@ public class ItemSlot : MonoBehaviour
         Stack = 0;
         _icon.sprite = null;
         _icon.color = _alpha0;
-        _tmp.text = "";
+        _stackTxt.text = "";
+        _equiped.SetActive(false);
     }
 
     public void ShowUI()

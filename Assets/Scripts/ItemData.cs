@@ -31,6 +31,12 @@ public class ItemDataBuff
     public float Time;
     public float Value;
 }
+[System.Serializable]
+public class ItemDataEquip
+{
+    public BuffType Type;
+    public float Value;
+}
 
 [CreateAssetMenu(fileName = "Item", menuName = "New Item")]
 public class ItemData : ScriptableObject
@@ -50,4 +56,8 @@ public class ItemData : ScriptableObject
 
     [Header("Buff")]
     public ItemDataBuff[] buffs;
+
+    [Header("Equip")]
+    public bool isEquiped;
+    public ItemDataEquip[] equips;
 }
