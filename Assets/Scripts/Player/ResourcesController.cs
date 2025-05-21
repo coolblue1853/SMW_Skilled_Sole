@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ResourcesController : MonoBehaviour
 {
+    [Header("Stemina")]
     private PlayerStatHandler _statHandler;
     private PlayerController _playerController;
     [SerializeField] private float _restoreDelay = 2f; // 멈춘 뒤 회복까지 대기 시간

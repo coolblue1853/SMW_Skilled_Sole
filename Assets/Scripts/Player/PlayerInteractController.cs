@@ -6,6 +6,7 @@ public class PlayerInteractController : MonoBehaviour
     public event Action<ItemObject> OnInteractionChanged;
     public event Action<ItemData> OnAddItem;
 
+    [Header("Info")]
     [SerializeField] private float _checkRate = 0.05f;
     private float _lastCheckTime;
     [SerializeField] private float _maxCheckDistance;

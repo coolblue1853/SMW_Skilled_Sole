@@ -29,9 +29,4 @@ public class PlayerManager : MonoBehaviour
         BuffController = GetComponent<BuffController>();
     }
 
-    private void Update()
-    {
-
-    }
-
 }
