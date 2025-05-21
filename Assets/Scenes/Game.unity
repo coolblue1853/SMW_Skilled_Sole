@@ -15191,6 +15191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1876340750}
   - component: {fileID: 1876340751}
+  - component: {fileID: 1876340752}
   m_Layer: 5
   m_Name: ItemSlots
   m_TagString: Untagged
@@ -15241,6 +15242,26 @@ MonoBehaviour:
   m_Spacing: {x: 5, y: 5}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!114 &1876340752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1876340749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa4bb00919f2ca4bb280a9d322ce37a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uI_Inventory: {fileID: 0}
+  Item: {fileID: 0}
+  Stack: 0
+  Idx: -1
+  isEquiped: 0
+  _icon: {fileID: 0}
+  _stackTxt: {fileID: 0}
+  _equiped: {fileID: 0}
 --- !u!1 &1890027312
 GameObject:
   m_ObjectHideFlags: 0

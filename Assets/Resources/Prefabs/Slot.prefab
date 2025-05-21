@@ -27,15 +27,15 @@ RectTransform:
   m_GameObject: {fileID: 56085550587139005}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 146242484294850725}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0.3254, y: 0.3254}
+  m_SizeDelta: {x: 83.2985, y: 83.2985}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5094663947806840846
 CanvasRenderer:
@@ -109,8 +109,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 16.9, y: 17.8}
-  m_SizeDelta: {x: 30, y: 18.6861}
+  m_AnchoredPosition: {x: 28.595703, y: 34.08024}
+  m_SizeDelta: {x: 37.8085, y: 24.3256}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &394632785994692677
 CanvasRenderer:
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 12
-  m_fontSizeMax: 16
+  m_fontSizeMax: 24
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -243,8 +243,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 10.3, y: -18.6}
-  m_SizeDelta: {x: 30, y: 18.6861}
+  m_AnchoredPosition: {x: 25.3425, y: -34.48308}
+  m_SizeDelta: {x: 36.5071, y: 19.1199}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6739417041106711241
 CanvasRenderer:
@@ -306,7 +306,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 12
-  m_fontSizeMax: 16
+  m_fontSizeMax: 24
   m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
@@ -439,6 +439,7 @@ MonoBehaviour:
   Item: {fileID: 0}
   Stack: 0
   Idx: -1
+  isEquiped: 0
   _icon: {fileID: 8892296652143885716}
   _stackTxt: {fileID: 8166547106820139409}
   _equiped: {fileID: 4943541869761822122}
