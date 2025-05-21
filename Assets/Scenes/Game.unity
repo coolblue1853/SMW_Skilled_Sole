@@ -1568,13 +1568,14 @@ GameObject:
   - component: {fileID: 186322961}
   - component: {fileID: 186322960}
   - component: {fileID: 186322965}
-  - component: {fileID: 186322966}
   - component: {fileID: 186322959}
+  - component: {fileID: 186322966}
   - component: {fileID: 186322963}
   - component: {fileID: 186322968}
   - component: {fileID: 186322967}
   - component: {fileID: 186322969}
   - component: {fileID: 186322970}
+  - component: {fileID: 186322971}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1664,7 +1665,7 @@ Transform:
   m_GameObject: {fileID: 186322958}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.81, y: 2.76, z: -7.76}
+  m_LocalPosition: {x: 11.81, y: 24.2, z: 186.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1685,12 +1686,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c89435569cb0153408fd20c5a3e0cf37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _runUseStemina: 2
-  _restoreStemina: 4
-  _restoreDelay: 1
-  _useSteminaInterval: 0.1
   _runToggleCooldown: 0.5
   _moveInput: {x: 0, y: 0}
+  _runToggleTimer: 0
+  IsRunning: 0
+  _availableMove: 1
   _initialJumpForce: 40
   _jumpHoldGravity: 0.5
   _fallGravity: 2
@@ -1705,11 +1705,8 @@ MonoBehaviour:
   _wallJumpLayerMask:
     serializedVersion: 2
     m_Bits: 1024
-  _runToggleTimer: 0
-  _isRunning: 0
-  _availableMove: 1
   _ladderRayPivot: {fileID: 250344005}
-  wallJumpForce: 100
+  wallJumpForce: 120
   ladderGravity: -2
 --- !u!54 &186322965
 Rigidbody:
@@ -1834,6 +1831,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a5c8dcd909d1b45a7a669e599bbae9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &186322971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186322958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78398b35332889344a80c89f3a03d6ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _restoreDelay: 1
+  _useSteminaInterval: 0.1
+  RunUseStemina: 2
+  _restoreStemina: 4
 --- !u!1 &192071247
 GameObject:
   m_ObjectHideFlags: 0
@@ -2049,7 +2062,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60cf22d9899f0eb4097dd5abc6fb781b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _jumpForce: 150
+  _jumpForce: 200
 --- !u!208 &247988934
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -8618,7 +8631,6 @@ MonoBehaviour:
   _rotationSpeed: 20
   _minZoom: 2
   _maxZoom: 15
-  _isRightMousePressed: 0
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0

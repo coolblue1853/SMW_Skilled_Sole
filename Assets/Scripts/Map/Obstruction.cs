@@ -5,6 +5,7 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Obstruction : MonoBehaviour
 {
+    [Header("Info")]
     [SerializeField] float _damage = 10f;
 
     private void OnTriggerEnter(Collider other)
@@ -17,5 +18,4 @@ public class Obstruction : MonoBehaviour
     
         }
     }
-
 }

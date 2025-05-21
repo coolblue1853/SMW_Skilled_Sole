@@ -39,7 +39,8 @@ public class UIManager : MonoBehaviour
     {
 
     }
-    public void SetCanvas(GameObject go, bool sort = true, int canvasLayer = 0) // 기존 UI 오더를 채워주는 기능
+    // 캔버스 지정함수
+    public void SetCanvas(GameObject go, bool sort = true, int canvasLayer = 0) 
     {
 
         if(go.GetComponent<GraphicRaycaster>() == null)
@@ -65,6 +66,8 @@ public class UIManager : MonoBehaviour
         }
          
     }
+
+    // PopUI 등장 및 Stack 삽입
     public GameObject ShowPopupUI(string name = null)
     {
         Time.timeScale = 0f;
@@ -81,7 +84,7 @@ public class UIManager : MonoBehaviour
         return ui;
     }
 
-
+    // PopUI 제거 및 Stack 제거
     //확정적으로 원하는녀석 삭제하는지 체크
     public void ClosePopupUI(UI_Popup popup)
     {
@@ -93,7 +96,7 @@ public class UIManager : MonoBehaviour
         }
         ClosePopupUI();
     }
-    // 오버라이딩
+    // 가장 최근 제거
     public void ClosePopupUI()
     {
         if (_popupStack.Count == 0) return;
@@ -106,6 +109,4 @@ public class UIManager : MonoBehaviour
 
         Time.timeScale = 1.0f;
     }
-
-
 }

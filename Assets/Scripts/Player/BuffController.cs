@@ -41,6 +41,7 @@ public class BuffController : MonoBehaviour
         _statHandler = GetComponent<PlayerStatHandler>();
     }
 
+    // 버프 시간 체크
     private void Update()
     {
         float deltaTime = Time.deltaTime;
@@ -53,6 +54,7 @@ public class BuffController : MonoBehaviour
         }
     }
 
+    // 새로운 버프 적용
     public  void ApplyBuff(BuffType type, float value, float duration)
     {
         switch (type)

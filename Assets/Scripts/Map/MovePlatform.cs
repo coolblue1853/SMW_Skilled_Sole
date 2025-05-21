@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MovePlatform : MonoBehaviour
 {
-
+    [Header("Info")]
     [SerializeField] private Transform _startPoint;
     [SerializeField] private Transform _endPoint;
     private GameObject _platform;
@@ -39,6 +39,7 @@ public class MovePlatform : MonoBehaviour
         }
     }
 
+    // 원하는 방향으로 이동
     private IEnumerator MoveTo(Vector3 target)
     {
         while (Vector3.Distance(_platform.transform.position, target) > 0.01f)
@@ -51,6 +52,7 @@ public class MovePlatform : MonoBehaviour
         _platform.transform.position = target;
     }
 
+    // 플레이어가 올라탈시, 같이 움직이게 하기 위한 부모 설정
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.transform.CompareTag("Player"))

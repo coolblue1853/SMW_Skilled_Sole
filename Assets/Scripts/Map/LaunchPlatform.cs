@@ -7,22 +7,25 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class LaunchPlatform : MonoBehaviour
 {
-    private GameObject _player;
+    [Header("Info")]
     [SerializeField] private Transform _firePoint;
     [SerializeField] private float _shootForce = 10f;
     [SerializeField] private float _rotationSpeed = 90f;
     [SerializeField] private float _releasTime = 1f;
+
+    private GameObject _player;
     private PlayerController _targetController;
 
     void Update()
     {
         // Y축 고정 회전
         transform.Rotate(0f, _rotationSpeed * Time.deltaTime, 0f, Space.Self);
-     
     }
+
+    // 입력시 발사대 작동
     public void OnJump(InputValue input)
     {
-        FireProjectile();
+        ActiveJumper();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -34,11 +37,10 @@ public class LaunchPlatform : MonoBehaviour
             _targetController.SetAvailableMove(false);
             other.transform.position = transform.position;
         }
-
     }
 
-
-    void FireProjectile()
+    // 포신 방향으로 플레이어 발사 함수
+    void ActiveJumper()
     {
         if (_player == null)
             return;

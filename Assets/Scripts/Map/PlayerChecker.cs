@@ -5,6 +5,7 @@ using UnityEngine.InputSystem.HID;
 
 public class PlayerChecker : MonoBehaviour
 {
+    [Header("Info")]
     [SerializeField] private Transform _pivot;
     [SerializeField] private Behaviour _activateComponent;
     [SerializeField] private GameObject[] _objects;

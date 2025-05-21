@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class JumpPlatform : MonoBehaviour
 {
+    [Header("Info")]
     [SerializeField] private float _jumpForce;
     private float _yPivot;
     private float _extra = 0.1f;
@@ -25,8 +26,6 @@ public class JumpPlatform : MonoBehaviour
                 if (rb != null)
                     rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
             }
-
         }
     }
-
 }

@@ -7,15 +7,15 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private PlayerStatHandler _statHandler;
+    private ResourcesController _resourcesController;
     private Transform _cameraTransform;
 
     [Header("Walk_run")]
-    [SerializeField] private float _runUseStemina = 0.1f;
-    [SerializeField] private float _restoreStemina = 0.3f;
-    [SerializeField] private float _restoreDelay = 2f; // 멈춘 뒤 회복까지 대기 시간
-    [SerializeField] private float _useSteminaInterval = 0.1f;
     [SerializeField] private float _runToggleCooldown = 1f; // 멈췄을때의 달리기 -> 걷기 변환시간.
     [SerializeField] private Vector2 _moveInput;
+    [SerializeField] private float _runToggleTimer = 0f;
+    public bool IsRunning = false;
+    [SerializeField] private bool _availableMove = true;
 
     [Header("Jump")]
     [SerializeField] private float _initialJumpForce = 10f;
@@ -23,29 +23,27 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _fallGravity = 2f;  // 땟을때의 중력값
     [SerializeField] private float _maxJumpHoldTime = 0.2f;
 
+    private GroundChecker _groundChecker = new GroundChecker();
     [SerializeField] private LayerMask _groundLayerMask;
     [SerializeField] private Transform _groundPivot;
+
     [SerializeField] private LayerMask _ladderLayerMask;
     [SerializeField] private LayerMask _wallJumpLayerMask;
 
     private Rigidbody _rigidbody;
     private Vector3 _inputDir;
     private float _jumpTimer;
-    [SerializeField] private float _runToggleTimer = 0f;
-    private float _steminaTimer = 0f;
-    private float _restoreDelayTimer = 0f;
-    private float _restoreIntervalTimer = 0f;
     private bool _isJumping;
-    [SerializeField] private bool _isRunning = false;
     private bool _isMoving = false;
-    [SerializeField]  private bool _availableMove = true;
 
     // 사다리 관련 변수
+    [Header("Ladder")]
     [SerializeField] private Transform _ladderRayPivot;
     private bool _isOnLadder = false;
     private bool _isClimbing = false;
     private Vector3 _ladderForward; // 사다리 방향 캐싱
 
+    [Header("WallJump")]
     // 벽점프 관련변수
     [SerializeField] private float wallJumpForce = 8f;
     [SerializeField] private float ladderGravity = -2f; // 원하는 중력 세기
@@ -55,6 +53,7 @@ public class PlayerController : MonoBehaviour
     {
         _cameraTransform = Camera.main.transform;
         _statHandler = GetComponent<PlayerStatHandler>();
+        _resourcesController = GetComponent<ResourcesController>();
         _rigidbody = GetComponent<Rigidbody>();
     }
     private void FixedUpdate()
@@ -63,12 +62,10 @@ public class PlayerController : MonoBehaviour
         {
             Move();
         }
-
     }
     private void Update()
     {
         CheckLadder();
-
 
         if (_isClimbing && _isOnLadder)
         {
@@ -86,35 +83,34 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-
-        if (!_isMoving && _isRunning && _runToggleTimer > 0f)
+        if (!_isMoving && IsRunning && _runToggleTimer > 0f)
             _runToggleTimer -= Time.deltaTime;
 
         // 인터벌 타임이 지나면 자동으로 달리기 -> 걷기모드
-        if (_isMoving == false && _isRunning)
+        if (_isMoving == false && IsRunning)
         {
             if (_runToggleTimer <= 0f)
             {
-                _isRunning = false;
+                IsRunning = false;
                 _runToggleTimer = _runToggleCooldown;
             }
         }
-
-        HandleSteminaDrain();
-        HandleSteminaRestore();
         // 점프에 따른 중력값 변경
         AdjustGravity();
     }
 
+    // 움직임 입력
     public void OnMove(InputValue input)
     {
         if (!_availableMove)
             return;
 
-        if (_isRunning)
+        if (IsRunning)
             _runToggleTimer = _runToggleCooldown;
         _moveInput = input.Get<Vector2>();
     }
+
+    // 점프 입력
     public void OnJump(InputValue input)
     {
         if (_isClimbing && input.isPressed)
@@ -139,7 +135,7 @@ public class PlayerController : MonoBehaviour
 
         if (input.isPressed && _availableMove)
         {
-            if (CheckGrounded())
+            if (_groundChecker.CheckGrounded(_groundLayerMask,_groundPivot))
             {
                 _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z); // Y속도 초기화
                 _rigidbody.AddForce(Vector3.up * _initialJumpForce, ForceMode.Impulse);
@@ -152,18 +148,21 @@ public class PlayerController : MonoBehaviour
             _isJumping = false;
         }
     }
+
+    // 달리기 인풋
     public void OnRun(InputValue input)
     {
-        if (_isMoving && _statHandler.Stemina >= _runUseStemina)
+        if (_isMoving && _statHandler.Stemina >= _resourcesController.RunUseStemina)
         {
             if (_runToggleTimer >= 0f)
             {
-                _isRunning = !_isRunning; // 토글
+                IsRunning = !IsRunning; // 토글
                 _runToggleTimer = _runToggleCooldown;
             }
         }
     }
 
+    // 움직임 함수
     private void Move()
     {
         if (!_availableMove) return;
@@ -172,29 +171,18 @@ public class PlayerController : MonoBehaviour
         _isMoving = _inputDir.sqrMagnitude > 0.01f;
 
         // 카메라 기준 방향 계산
-        Vector3 cameraForward = _cameraTransform.forward;
-        Vector3 cameraRight = _cameraTransform.right;
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.Normalize();
-        cameraRight.Normalize();
-
+      Utils. GetCameraFlatDirections(_cameraTransform,out Vector3 cameraForward, out Vector3 cameraRight);
         Vector3 moveDir;
 
-        if (_isOnLadder) 
-        {
-            // 사다리에 붙으면 사다리 방향을 보도록
+        if (_isOnLadder)
             moveDir = _ladderForward;
-        }
         else
-        {
             moveDir = cameraForward * _inputDir.z + cameraRight * _inputDir.x;
-        }
 
-        float speed = _isRunning ? _statHandler.RunSpeed : _statHandler.WalkSpeed;
+        float speed = IsRunning ? _statHandler.RunSpeed : _statHandler.WalkSpeed;
 
-        if (_statHandler.Stemina < _runUseStemina)
-            _isRunning = false;
+        if (_statHandler.Stemina < _resourcesController.RunUseStemina)
+            IsRunning = false;
 
         Vector3 horizontalVelocity = moveDir * speed;
 
@@ -212,55 +200,15 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
     }
-
-
-
-    private void ClimbLadder()
-    {
-        float climbSpeed = _statHandler.WalkSpeed * 0.75f; // 사다리 속도는 걷는 속도의 75%
-        Vector3 climbVelocity = new Vector3(0, _moveInput.y * climbSpeed, 0);
-        _rigidbody.velocity = climbVelocity;
-    }
-
-    bool CheckGrounded()
-    {
-        Ray[] rays = new Ray[4]
-        {
-            new Ray(_groundPivot.position + (_groundPivot.forward * 0.2f) + (_groundPivot.up * 0.1f), Vector3.down),
-            new Ray(_groundPivot.position + (-_groundPivot.forward * 0.2f) + (_groundPivot.up * 0.1f), Vector3.down),
-            new Ray(_groundPivot.position + (_groundPivot.right * 0.2f) + (_groundPivot.up * 0.1f), Vector3.down),
-            new Ray(_groundPivot.position + (-_groundPivot.right * 0.2f) +(_groundPivot.up * 0.1f), Vector3.down)
-        };
-
-        for (int i = 0; i < rays.Length; i++)
-        {
-            Debug.DrawRay(rays[i].origin, rays[i].direction * 0.2f, Color.red, 0.1f);
-
-            if (Physics.Raycast(rays[i], 0.2f, _groundLayerMask))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-    private void CheckLadder()
+    // 사다리, 벽을 확인하는 함수
+    public void CheckLadder()
     {
         RaycastHit hit;
         Vector3 origin = _ladderRayPivot.position;
 
         _inputDir = new Vector3(_moveInput.x, 0, _moveInput.y);
-
-        Vector3 cameraForward = _cameraTransform.forward;
-        Vector3 cameraRight = _cameraTransform.right;
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.Normalize();
-        cameraRight.Normalize();
-
+        Utils.GetCameraFlatDirections(_cameraTransform, out Vector3 cameraForward, out Vector3 cameraRight);
         Vector3 direction = (cameraForward * _inputDir.z + cameraRight * _inputDir.x).normalized;
-
-        Debug.DrawRay(origin, direction * 0.6f, Color.red, 0.1f);
 
         if (Physics.Raycast(origin, direction, out hit, 0.6f, _ladderLayerMask))
         {
@@ -282,22 +230,27 @@ public class PlayerController : MonoBehaviour
                 _isWallJumpalbe = true;
             }
         }
-        else 
+        else
         {
-            if(_inputDir != Vector3.zero)
+            if (_inputDir != Vector3.zero)
             {
                 _isOnLadder = false;
                 _isClimbing = false;
                 _isWallJumpalbe = false;
                 _rigidbody.useGravity = true;
             }
-
         }
     }
 
+    // 사다리에 닿았을때 오르는 함수
+    private void ClimbLadder()
+    {
+        float climbSpeed = _statHandler.WalkSpeed * 0.75f; // 사다리 속도는 걷는 속도의 75%
+        Vector3 climbVelocity = new Vector3(0, _moveInput.y * climbSpeed, 0);
+        _rigidbody.velocity = climbVelocity;
+    }
 
-
-
+    // 약점프, 강점프를 위한 중력 조절 함수
     private void AdjustGravity()
     {
         float gravityForce = Mathf.Abs(Physics.gravity.y);
@@ -314,50 +267,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleSteminaDrain()
-    {
-        if (_isRunning)
-        {
-            _steminaTimer += Time.deltaTime;
-
-            if (_steminaTimer >= _useSteminaInterval)
-            {
-                _steminaTimer = 0f;
-                _statHandler.Stemina -= _runUseStemina;
-            }
-        }
-        else
-        {
-            _steminaTimer = 0f;
-        }
-    }
-    private void HandleSteminaRestore()
-    {
-        if (_isRunning)
-        {
-            _restoreDelayTimer = 0f;
-            _restoreIntervalTimer = 0f;
-            return;
-        }
-
-        if (_statHandler.MaxStemina > _statHandler.Stemina)
-        {
-            _restoreDelayTimer += Time.deltaTime;
-
-            if (_restoreDelayTimer >= _restoreDelay)
-            {
-                _restoreIntervalTimer += Time.deltaTime;
-
-                if (_restoreIntervalTimer >= _useSteminaInterval)
-                {
-                    _restoreIntervalTimer = 0f;
-                    _statHandler.Stemina += _restoreStemina;
-                }
-            }
-        }
-
-    }
-
+   
+    // 이동 조작이 가능한지 결정하는 함수
     public void SetAvailableMove(bool value)
     {
         if (_inputDir == Vector3.zero)
@@ -372,4 +283,5 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(delay);
         SetAvailableMove(true);
     }
+
 }

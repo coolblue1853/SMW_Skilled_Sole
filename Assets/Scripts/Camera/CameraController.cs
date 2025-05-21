@@ -20,8 +20,9 @@ public class CameraController : MonoBehaviour
 
     // 카메라 각 입력
     private Vector2 _lookInput = Vector2.zero;
-    [SerializeField]  private bool _isRightMousePressed = false;
+    private bool _isRightMousePressed = false;
 
+    // 3인칭 각도 조절
     public void OnLook(InputValue input)
     {
         if (_isRightMousePressed)
@@ -34,6 +35,7 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    // 3인칭 줌 기능
     public void OnZoom(InputValue input)
     {
         float scroll = input.Get<float>();
@@ -43,6 +45,7 @@ public class CameraController : MonoBehaviour
 
     }   
 
+    // 3인칭 각도 조절을 위한 인풋
     public void OnRightClick(InputValue input)
     {
         _isRightMousePressed = input.isPressed;

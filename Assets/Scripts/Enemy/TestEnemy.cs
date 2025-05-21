@@ -5,11 +5,13 @@ using UnityEngine.AI;
 
 public class TestEnemy :MonoBehaviour
 {
+    [Header("AI")]
     private NavMeshAgent _agent;
     private Transform _player;
     private PlayerStatHandler _statHandler;
     [SerializeField] private float _updateRate = 0.2f; // 네비메쉬 갱신
 
+    [Header("Attack")]
     [SerializeField] private float _detectionRadius = 5f;
     [SerializeField] private float _attackCooldown = 2f;
     [SerializeField] private float _damge = 10f;
@@ -43,6 +45,8 @@ public class TestEnemy :MonoBehaviour
             }
         }
     }
+
+    // 경로 재탐색 코루틴
     IEnumerator UpdateDestination()
     {
         while (true)
