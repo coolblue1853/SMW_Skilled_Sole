@@ -7,15 +7,57 @@ public class TestEnemy :MonoBehaviour
 {
     private NavMeshAgent _agent;
     private Transform _player;
+    private PlayerStatHandler _statHandler;
+    [SerializeField] private float _updateRate = 0.2f; // 네비메쉬 갱신
 
+    [SerializeField] private float _detectionRadius = 5f;
+    [SerializeField] private float _attackCooldown = 2f;
+    [SerializeField] private float _damge = 10f;
+    [SerializeField] private LayerMask _targetLayer;     
 
-    public float updateRate = 0.5f; // 경로 갱신 주기 (초 단위)
-
-    private void Update()
+    private float attackTimer = 0f;
+    private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         _player = PlayerManager.Instance.transform;
+        _statHandler = _player.GetComponent<PlayerStatHandler>();
+    }
+    private void Start()
+    {
+        StartCoroutine(UpdateDestination());
+    }
+    void Update()
+    {
+        // 공격 코드
+        attackTimer -= Time.deltaTime;
 
-        _agent.SetDestination(_player.position);
+        Collider[] hits = Physics.OverlapSphere(transform.position, _detectionRadius, _targetLayer);
+
+        if (hits.Length > 0)
+        {
+
+            if (attackTimer <= 0f)
+            {
+                _statHandler.Health -= _damge;
+                attackTimer = _attackCooldown;
+            }
+        }
+    }
+    IEnumerator UpdateDestination()
+    {
+        while (true)
+        {
+            if (_player != null)
+                _agent.SetDestination(_player.position);
+
+            yield return new WaitForSeconds(_updateRate);
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        // 에디터에서 감지 범위 시각화
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _detectionRadius);
     }
 }

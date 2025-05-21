@@ -360,8 +360,9 @@ public class PlayerController : MonoBehaviour
 
     public void SetAvailableMove(bool value)
     {
-        _inputDir = Vector3.zero;
-        _moveInput = Vector3.zero;
+        if (_inputDir == Vector3.zero)
+            _moveInput = Vector3.zero;
+
         _availableMove = value;
         _rigidbody.velocity = Vector3.zero;
         _isMoving = false;

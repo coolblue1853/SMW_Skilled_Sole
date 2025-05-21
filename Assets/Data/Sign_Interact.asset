@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0aedb497134f054fa92878db1164099, type: 3}
+  m_Name: Sign_Interact
+  m_EditorClassIdentifier: 
+  DisplayName: "\uC0C1\uD638\uC791\uC6A9 \uD45C\uC2DC\uD310"
+  Descrition: "\uC815\uBA74\uC73C\uB85C \uBC14\uB77C\uBCF4\uBA74 \uC0C1\uD638\uC791\uC6A9\uC774
+    \uAC00\uB2A5\uD569\uB2C8\uB2E4.\\n\uB9C8\uC6B0\uC2A4\uB97C \uAC00\uC838\uB2E4
+    \uB300\uBA74 \uC0C1\uD638\uC791\uC6A9 \uAC00\uB2A5\uD55C \uC624\uBE0C\uC81D\uD2B8\uC778\uC9C0
+    \uD655\uC778 \uAC00\uB2A5\uD569\uB2C8\uB2E4."
+  Type: 0
+  Icon: {fileID: 0}
+  DropPrefab: {fileID: 0}
+  MaxStackAmount: 0
+  consumables: []
+  buffs: []
+  isEquiped: 0
+  equips: []

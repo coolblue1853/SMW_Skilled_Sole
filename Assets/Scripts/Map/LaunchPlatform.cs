@@ -8,15 +8,16 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 public class LaunchPlatform : MonoBehaviour
 {
     private GameObject _player;
-    [SerializeField] private Transform firePoint;
-    [SerializeField] private float shootForce = 10f;
-    [SerializeField] private float rotationSpeed = 90f;
+    [SerializeField] private Transform _firePoint;
+    [SerializeField] private float _shootForce = 10f;
+    [SerializeField] private float _rotationSpeed = 90f;
+    [SerializeField] private float _releasTime = 1f;
     private PlayerController _targetController;
 
     void Update()
     {
         // Y축 고정 회전
-        transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f, Space.Self);
+        transform.Rotate(0f, _rotationSpeed * Time.deltaTime, 0f, Space.Self);
      
     }
     public void OnJump(InputValue input)
@@ -42,15 +43,15 @@ public class LaunchPlatform : MonoBehaviour
         if (_player == null)
             return;
 
-        _player.transform.position = firePoint.position;
+        _player.transform.position = _firePoint.position;
         _player.transform.rotation = Quaternion.identity;
 
-        Vector3 direction = firePoint.forward; // 이 방향이 부모 회전 + 포신 기울기 반영됨
+        Vector3 direction = _firePoint.forward; // 이 방향이 부모 회전 + 포신 기울기 반영됨
 
         Rigidbody rb = _player.GetComponent<Rigidbody>();
-        rb.AddForce(direction * shootForce, ForceMode.Impulse);
+        rb.AddForce(direction * _shootForce, ForceMode.Impulse);
         if (_targetController != null)
-            StartCoroutine(EnableMoveAfterDelay(0.5f)); // ← 예: 0.5초 후 이동 가능
+            StartCoroutine(EnableMoveAfterDelay(_releasTime)); // ← 예: 0.5초 후 이동 가능
 
         _player = null;
     }

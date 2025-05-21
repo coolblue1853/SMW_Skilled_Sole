@@ -39,7 +39,7 @@ public class UI_Interaction : UI_Scene
         if (current != null)
         {
             nameTxt.text = current.Data.DisplayName;
-            descriptionTxt.text = current.Data.Descrition;
+            descriptionTxt.text = current.Data.Descrition.Replace("\\n", "\n"); 
             panel.gameObject.SetActive(true);
         }
         else
