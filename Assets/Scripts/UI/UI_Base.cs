@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using System.Xml.Linq;
 public abstract class UI_Base : MonoBehaviour
 {
     public int canvasLayer;

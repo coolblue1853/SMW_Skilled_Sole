@@ -1,12 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
-using static UnityEditor.Timeline.Actions.MenuPriority;
 
 public class UI_Inventory : UI_Scene
 {
@@ -124,6 +119,7 @@ public class UI_Inventory : UI_Scene
 
     public void ShowDetail(int index)
     {
+        var slot = itemSlots[_curIndex];
         _curIndex = index;
         _curItemData = itemSlots[_curIndex].Item;
         _detailNameTxt.text = _curItemData.DisplayName; 
@@ -137,7 +133,7 @@ public class UI_Inventory : UI_Scene
                 _consumBtn.gameObject.SetActive(true);
                 break;
             case ItemType.Equipable:
-                if (_curItemData.isEquiped)
+                if (slot.isEquiped)
                 {
                     _unequipBtn.gameObject.SetActive(true);
                     _equipBtn.gameObject.SetActive(false);
@@ -211,7 +207,7 @@ public class UI_Inventory : UI_Scene
                 }
             }
             slot.UpdateEquiped(true);
-            _curItemData.isEquiped = !_curItemData.isEquiped;
+            slot.isEquiped = !slot.isEquiped;
             _unequipBtn.gameObject.SetActive(true);
             _equipBtn.gameObject.SetActive(false);
         }
@@ -233,7 +229,7 @@ public class UI_Inventory : UI_Scene
                 }
             }
             slot.UpdateEquiped(false);
-            _curItemData.isEquiped = !_curItemData.isEquiped;
+            slot.isEquiped = !slot.isEquiped;
             _unequipBtn.gameObject.SetActive(false);
             _equipBtn.gameObject.SetActive(true);
         }

@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.UI;
 public class UI_Stemina : UI_Scene
 {

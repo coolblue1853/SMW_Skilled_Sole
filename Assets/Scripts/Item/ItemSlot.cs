@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +10,7 @@ public class ItemSlot : MonoBehaviour
     public ItemData Item = null;
     public int Stack = 0;
     public int Idx = -1;
+    public bool isEquiped = false;
 
     [Header("UI")]
     [SerializeField] private Image _icon;

@@ -1,9 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class LaunchPlatform : MonoBehaviour
 {

@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum ItemType
@@ -57,6 +54,5 @@ public class ItemData : ScriptableObject
     public ItemDataBuff[] buffs;
 
     [Header("Equip")]
-    public bool isEquiped;
     public ItemDataEquip[] equips;
 }
