@@ -9,7 +9,7 @@
 ![SoloMain](https://github.com/user-attachments/assets/6d2dde4d-55b8-4b9d-9919-0e4ea65fd58c)
 
 ## 빌드 파일 주소
-https://drive.google.com/file/d/1aGOkOX911GhEabwecfvCFYxrNr2ctFqE/view?usp=sharing
+[https://drive.google.com/file/d/1aGOkOX911GhEabwecfvCFYxrNr2ctFqE/view?usp=sharing](https://drive.google.com/file/d/1TOyAR96vgqC9pLl2DK1cgoF2GsOzYkXI/view?usp=sharing)
 
 ## 🕹️ 기능
 <details>
