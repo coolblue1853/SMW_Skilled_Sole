@@ -47,12 +47,25 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float ladderGravity = -2f; // 원하는 중력 세기
     private bool _isWallJumpalbe = false;
 
+    [Header("Sounds")]
+    [SerializeField] private float walkInterval = 0.5f;
+    [SerializeField] private float runInterval = 0.3f;
+    [SerializeField] private float footstepInterval;
+    private float footstepTimer = 0f;
+
     private void Awake()
     {
-        _cameraTransform = Camera.main.transform;
-        _statHandler = GetComponent<PlayerStatHandler>();
-        _resourcesController = GetComponent<ResourcesController>();
-        _rigidbody = GetComponent<Rigidbody>();
+        try
+        {
+            _cameraTransform = Camera.main.transform;
+            _statHandler = GetComponent<PlayerStatHandler>();
+            _resourcesController = GetComponent<ResourcesController>();
+            _rigidbody = GetComponent<Rigidbody>();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[PlayerController] 컴포넌트 초기화 중 예외 발생: {e}");
+        }
     }
     private void FixedUpdate()
     {
@@ -80,6 +93,27 @@ public class PlayerController : MonoBehaviour
                 _isJumping = false;
             }
         }
+        // 발소리
+        if (_isMoving && _groundChecker.CheckGrounded(_groundLayerMask, _groundPivot))
+        {
+            footstepTimer -= Time.deltaTime;
+
+            if (IsRunning && footstepInterval != runInterval)
+                footstepInterval = runInterval;
+            else if (!IsRunning && footstepInterval != walkInterval)
+                footstepInterval = walkInterval;
+
+            if (footstepTimer <= 0f)
+            {
+                SoundManager.Instance.PlaySFX("Walk",transform);
+                footstepTimer = footstepInterval;
+            }
+        }
+        else
+        {
+            footstepTimer = 0f;
+        }
+
 
         if (!_isMoving && IsRunning && _runToggleTimer > 0f)
             _runToggleTimer -= Time.deltaTime;
@@ -102,6 +136,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!_availableMove)
             return;
+
 
         if (IsRunning)
             _runToggleTimer = _runToggleCooldown;
